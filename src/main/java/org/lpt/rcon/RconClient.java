@@ -13,10 +13,10 @@ import java.util.Base64;
 
 import static org.lpt.Util.LOGGER;
 
-public class Client extends Rcon {
+public class RconClient extends Rcon {
     private boolean connected = false;
 
-    public Client(String hostname, int port) throws Exception {
+    public RconClient(String hostname, int port) throws Exception {
         super(SocketChannel.open(new InetSocketAddress(hostname, port)), Config.S2C_BYTES, Config.C2S_BYTES, new PacketCodec(Config.CHARSET), 1);
 
         aesKey = AES.generateKey();

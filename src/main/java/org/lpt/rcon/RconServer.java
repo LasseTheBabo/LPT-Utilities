@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
 
 import static org.lpt.Util.LOGGER;
 
-public class Server {
+public class RconServer {
     private final int port;
     private final String password;
 
@@ -27,7 +27,7 @@ public class Server {
 
     private final MessageHandler handler;
 
-    public Server(int port, String password, MessageHandler handler) {
+    public RconServer(int port, String password, MessageHandler handler) {
         this.port = port;
         this.password = password;
         this.handler = handler;
