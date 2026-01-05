@@ -80,7 +80,7 @@ public class RconServer {
             this.client = client;
         }
 
-        public void handle() throws Exception {
+        void handle() throws Exception {
             readExpected(PacketType.AUTH);
 
             byte[] publicKey = localKey.getPublic().getEncoded();
@@ -106,7 +106,11 @@ public class RconServer {
             while (true) {
                 try {
                     String message = readEncrypted();
-                    handler.handleMessage(message);
+                    String[] response = handler.handleMessage(message);
+                    for (String line : response) {
+                        writeEncrypted(line);
+                    }
+                    writeEncrypted("\0");
                 } catch (Exception e) {
                     LOGGER.error("Error reading message: {}", e.getMessage());
                     break;
