@@ -1,21 +1,17 @@
 package org.lpt.util.rcon.packet;
 
 public class Packet {
-    final public int requestId;
-    final public int type;
-    final public String payload;
+    public final int requestId;
+    public final int type;
+    public final String payload;
 
-    public Packet(final int requestId, final int type, final String payload) {
+    public Packet(int requestId, int type, String payload) {
         this.requestId = requestId;
         this.type = type;
         this.payload = payload;
     }
 
-    public Packet(final int requestId, final int type) {
-        this(requestId, type, "");
-    }
-
     public boolean isValid() {
-        return requestId != -1;
+        return (type != -1) && (requestId != -1);
     }
 }

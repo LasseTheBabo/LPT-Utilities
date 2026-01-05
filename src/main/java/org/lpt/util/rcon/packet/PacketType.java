@@ -1,11 +1,10 @@
 package org.lpt.util.rcon.packet;
 
 public class PacketType {
-    public final static int AUTH = 1;
-    public final static int RSA = 2;
-    public final static int AES = 3;
-    public final static int AUTH_RESPONSE = 4;
+    public static final int AUTH = 1;
+    public static final int RSA = 2;
+    public static final int AES = 3;
 
-    public final static int IV = 5;
-    public final static int ENCRYPTED = 6;
+    public static final int IV = 4;
+    public static final int ENCRYPTED = 5;
 }

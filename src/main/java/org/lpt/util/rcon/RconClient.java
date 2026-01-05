@@ -2,45 +2,40 @@ package org.lpt.util.rcon;
 
 import org.lpt.util.Config;
 import org.lpt.util.encryption.AES;
-import org.lpt.util.encryption.RSA;
-import org.lpt.util.rcon.packet.Packet;
 import org.lpt.util.rcon.packet.PacketCodec;
 import org.lpt.util.rcon.packet.PacketType;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
-import java.util.Base64;
 
 import static org.lpt.util.Util.LOGGER;
 
 public class RconClient extends Rcon {
-    private boolean connected = false;
+    public static RconClient connect(String hostname, int port) throws NullPointerException {
+        try {
+            SocketChannel socketChannel = SocketChannel.open(new InetSocketAddress(hostname, port));
+            return new RconClient(socketChannel);
+        } catch (Exception e) {
+            LOGGER.error("Can't connect to {}:{}: {}", hostname, port, e.getMessage());
+        }
 
-    public RconClient(String hostname, int port) throws Exception {
-        super(SocketChannel.open(new InetSocketAddress(hostname, port)), Config.S2C_BYTES, Config.C2S_BYTES, new PacketCodec(Config.CHARSET), 1);
+        return null;
+    }
 
+    private RconClient(SocketChannel socketChannel) throws Exception {
+        super(socketChannel, Config.S2C_BYTES, Config.C2S_BYTES, new PacketCodec(Config.CHARSET));
         aesKey = AES.generateKey();
     }
 
-    public void connect(String password) throws Exception {
-        if (connected)
-            return;
-        connected = true;
+    public void authenticate(String password) throws Exception {
+        write(PacketType.AUTH, "");
+        importRsaKey();
+        sendRsaKey();
+        sendAesKey();
 
-        write(PacketType.AUTH);
-
-        Packet rsaPacket = readExpected(PacketType.RSA);
-        remoteKey = RSA.importKey(rsaPacket.payload);
-
-        byte[] publicKey = localKey.getPublic().getEncoded();
-        write(PacketType.RSA, Base64.getEncoder().encodeToString(publicKey));
-
-        byte[] encryptedAesKey = RSA.encrypt(aesKey.getEncoded(), remoteKey);
-        write(PacketType.AES, Base64.getEncoder().encodeToString(encryptedAesKey));
-
+        write(PacketType.AUTH, "");
         writeEncrypted(password);
-
-        readExpected(PacketType.AUTH_RESPONSE);
+        read(PacketType.AUTH);
     }
 
     public void sendCommand(String command) throws Exception {

@@ -1,17 +1,13 @@
 package org.lpt.util.rcon;
 
 import org.lpt.util.Config;
-import org.lpt.util.encryption.RSA;
-import org.lpt.util.rcon.packet.Packet;
 import org.lpt.util.rcon.packet.PacketCodec;
 import org.lpt.util.rcon.packet.PacketType;
 
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Base64;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -75,44 +71,37 @@ public class RconServer {
         SocketChannel client;
 
         public ClientHandler(SocketChannel client) throws Exception {
-            super(client, Config.C2S_BYTES, Config.S2C_BYTES, new PacketCodec(Config.CHARSET), 0);
+            super(client, Config.C2S_BYTES, Config.S2C_BYTES, new PacketCodec(Config.CHARSET));
 
             this.client = client;
         }
 
         void handle() throws Exception {
-            readExpected(PacketType.AUTH);
+            read(PacketType.AUTH);
+            sendRsaKey();
+            importRsaKey();
+            importAesKey();
 
-            byte[] publicKey = localKey.getPublic().getEncoded();
-            write(PacketType.RSA, Base64.getEncoder().encodeToString(publicKey));
-
-            Packet rsaPacket = readExpected(PacketType.RSA);
-            remoteKey = RSA.importKey(rsaPacket.payload);
-
-            Packet aesPacket = readExpected(PacketType.AES);
-            byte[] encryptedAesKey = Base64.getDecoder().decode(aesPacket.payload);
-            byte[] decryptedAesKey = RSA.decrypt(encryptedAesKey, localKey.getPrivate());
-            aesKey = new SecretKeySpec(decryptedAesKey, "AES");
-
-            String pw = readEncrypted();
-            if (!pw.equals(password)) {
-                LOGGER.error("Wrong password from: {}", client.getLocalAddress());
+            read(PacketType.AUTH);
+            if (!readEncrypted().equals(password)) {
+                LOGGER.error("Wrong password from: {}", client.getRemoteAddress());
                 close();
                 return;
             }
+            write(PacketType.AUTH, "");
 
-            write(PacketType.AUTH_RESPONSE);
-
-            while (true) {
+            while (running) {
                 try {
                     String message = readEncrypted();
                     String[] response = handler.handleMessage(message);
+
                     for (String line : response) {
                         writeEncrypted(line);
                     }
+
                     writeEncrypted("\0");
-                } catch (Exception e) {
-                    LOGGER.error("Error reading message: {}", e.getMessage());
+                } catch (IOException e) {
+                    LOGGER.error("Error reading message: {}", e.toString());
                     break;
                 }
             }
