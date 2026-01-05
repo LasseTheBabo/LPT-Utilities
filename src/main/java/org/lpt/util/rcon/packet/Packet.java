@@ -1,4 +1,4 @@
-package org.lpt.rcon.packet;
+package org.lpt.util.rcon.packet;
 
 public class Packet {
     final public int requestId;

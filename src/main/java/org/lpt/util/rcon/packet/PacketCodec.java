@@ -1,4 +1,4 @@
-package org.lpt.rcon.packet;
+package org.lpt.util.rcon.packet;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;

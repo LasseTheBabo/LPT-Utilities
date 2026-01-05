@@ -1,8 +1,8 @@
-package org.lpt.rcon;
+package org.lpt.util.rcon;
 
-import org.lpt.encryption.AES;
-import org.lpt.encryption.RSA;
-import org.lpt.rcon.packet.*;
+import org.lpt.util.encryption.AES;
+import org.lpt.util.encryption.RSA;
+import org.lpt.util.rcon.packet.*;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Base64;
 
-import static org.lpt.Util.LOGGER;
+import static org.lpt.util.Util.LOGGER;
 
 public class Rcon {
     final private PacketReader reader;

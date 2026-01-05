@@ -1,4 +1,4 @@
-package org.lpt;
+package org.lpt.util;
 
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.common.MinecraftForge;

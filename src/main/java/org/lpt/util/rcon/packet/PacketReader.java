@@ -1,11 +1,11 @@
-package org.lpt.rcon.packet;
+package org.lpt.util.rcon.packet;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import static org.lpt.Util.LOGGER;
+import static org.lpt.util.Util.LOGGER;
 
 public class PacketReader {
     final private Source source;

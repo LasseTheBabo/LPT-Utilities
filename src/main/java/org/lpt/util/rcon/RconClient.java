@@ -1,17 +1,17 @@
-package org.lpt.rcon;
+package org.lpt.util.rcon;
 
-import org.lpt.Config;
-import org.lpt.encryption.AES;
-import org.lpt.encryption.RSA;
-import org.lpt.rcon.packet.Packet;
-import org.lpt.rcon.packet.PacketCodec;
-import org.lpt.rcon.packet.PacketType;
+import org.lpt.util.Config;
+import org.lpt.util.encryption.AES;
+import org.lpt.util.encryption.RSA;
+import org.lpt.util.rcon.packet.Packet;
+import org.lpt.util.rcon.packet.PacketCodec;
+import org.lpt.util.rcon.packet.PacketType;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 import java.util.Base64;
 
-import static org.lpt.Util.LOGGER;
+import static org.lpt.util.Util.LOGGER;
 
 public class RconClient extends Rcon {
     private boolean connected = false;

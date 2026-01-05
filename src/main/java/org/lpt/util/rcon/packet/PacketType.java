@@ -1,4 +1,4 @@
-package org.lpt.rcon.packet;
+package org.lpt.util.rcon.packet;
 
 public class PacketType {
     public final static int AUTH = 1;

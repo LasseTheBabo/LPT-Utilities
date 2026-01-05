@@ -1,4 +1,4 @@
-package org.lpt.encryption;
+package org.lpt.util.encryption;
 
 import javax.crypto.Cipher;
 import java.security.*;
