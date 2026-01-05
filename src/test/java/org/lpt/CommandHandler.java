@@ -8,7 +8,7 @@ public class CommandHandler implements MessageHandler {
     @Override
     public String[] handleMessage(String message) {
         LOGGER.info("Received message: {}", message);
-        return new String[0];
-        //return new String[] { "hallo" };
+        //return new String[0];
+        return new String[] { "hallo" };
     }
 }

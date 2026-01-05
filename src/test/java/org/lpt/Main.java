@@ -5,7 +5,7 @@ import org.lpt.util.rcon.RconServer;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        RconServer rconServer = new RconServer(25570, "eulibr", new CommandHandler());
+        RconServer rconServer = new RconServer(25570, "minecraft", new CommandHandler());
         rconServer.open();
         Thread.sleep(100);
 
@@ -13,7 +13,7 @@ public class Main {
         if (client == null)
             return;
 
-        client.authenticate("eulibr");
+        client.authenticate("minecraft");
         client.sendCommand("kill Dev");
         client.close();
 

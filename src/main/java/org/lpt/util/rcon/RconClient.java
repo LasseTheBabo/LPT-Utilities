@@ -28,6 +28,8 @@ public class RconClient extends Rcon {
     }
 
     public void authenticate(String password) throws Exception {
+        if (!channel.isOpen()) return;
+
         write(PacketType.AUTH, "");
         importRsaKey();
         sendRsaKey();
@@ -35,15 +37,33 @@ public class RconClient extends Rcon {
 
         write(PacketType.AUTH, "");
         writeEncrypted(password);
-        read(PacketType.AUTH);
+        try {
+            read(PacketType.AUTH);
+        } catch (ConnectionClosedException e) {
+            LOGGER.error("Password rejected");
+            close();
+        }
     }
 
-    public void sendCommand(String command) throws Exception {
-        writeEncrypted(command);
+    public void sendCommand(String command) {
+        if (!channel.isOpen()) return;
+
+        try {
+            writeEncrypted(command);
+        } catch (Exception e) {
+            LOGGER.error("Could not send command: {}", e.getMessage());
+            return;
+        }
+
         String line = "";
         while (!line.equals("\0")) {
             LOGGER.info(line);
-            line = readEncrypted();
+            try {
+                line = readEncrypted();
+            } catch (Exception e) {
+                LOGGER.error("Could not read command output: {}", e.getMessage());
+                return;
+            }
         }
     }
 }

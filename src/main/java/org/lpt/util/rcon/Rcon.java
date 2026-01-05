@@ -6,6 +6,7 @@ import org.lpt.util.rcon.packet.*;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.EOFException;
 import java.io.IOException;
 import java.nio.channels.ByteChannel;
 import java.security.KeyPair;
@@ -32,23 +33,36 @@ public class Rcon {
         this.localKey = RSA.generate();
     }
 
-    protected void write(int type, String payload) throws IOException {
+    protected void write(int type, String payload) throws ConnectionClosedException {
+        ensureConnected();
         try {
             writer.write(new Packet(0, type, payload));
-        } catch (Exception ignored) { handleClosedConnection(); }
+        } catch (IOException e) {
+            throw new ConnectionClosedException("Connection closed from other side", e);
+        }
     }
 
-    protected Packet read(int type) throws IOException {
-        try {
-            Packet response = reader.read();
-            if ((response.type != type) && response.isValid()) {
-                LOGGER.error("Received packet type is {}. Expected: {}", response.type, type);
-                close();
-            }
-            return response;
-        } catch (Exception ignored) { handleClosedConnection(); }
+    protected Packet read(int type) throws ConnectionClosedException {
+        ensureConnected();
+        final Packet response;
 
-        return null;
+        try {
+            response = reader.read();
+        } catch (EOFException e) {
+            throw new ConnectionClosedException("Connection closed from other side", e);
+        } catch (IOException e) {
+            throw new ConnectionClosedException("Read failed", e);
+        }
+
+        if (!response.isValid()) {
+            throw new ConnectionClosedException("Invalid packet received");
+        }
+
+        if (response.type != type) {
+            throw new ConnectionClosedException("Expected packet type " + type + " but got " + response.type);
+        }
+
+        return response;
     }
 
     protected void writeEncrypted(String payload) throws Exception {
@@ -70,36 +84,56 @@ public class Rcon {
         return new String(decryptedMessage);
     }
 
-    protected void sendRsaKey() throws IOException {
-        byte[] publicKey = localKey.getPublic().getEncoded();
-        write(PacketType.RSA, Base64.getEncoder().encodeToString(publicKey));
+    protected void sendRsaKey() {
+        try {
+            byte[] publicKey = localKey.getPublic().getEncoded();
+            write(PacketType.RSA, Base64.getEncoder().encodeToString(publicKey));
+        } catch (Exception e) {
+            LOGGER.error("Error while sending RSA key: ", e);
+        }
     }
 
-    protected void importRsaKey() throws Exception {
-        Packet rsaPacket = read(PacketType.RSA);
-        remoteKey = RSA.importKey(rsaPacket.payload);
+    protected void importRsaKey() {
+        try {
+            Packet rsaPacket = read(PacketType.RSA);
+            remoteKey = RSA.importKey(rsaPacket.payload);
+        } catch (Exception e) {
+            LOGGER.error("Error while receiving RSA key: ", e);
+        }
     }
 
-    protected void sendAesKey() throws Exception {
-        byte[] encryptedAesKey = RSA.encrypt(aesKey.getEncoded(), remoteKey);
-        write(PacketType.AES, Base64.getEncoder().encodeToString(encryptedAesKey));
+    protected void sendAesKey() {
+        try {
+            byte[] encryptedAesKey = RSA.encrypt(aesKey.getEncoded(), remoteKey);
+            write(PacketType.AES, Base64.getEncoder().encodeToString(encryptedAesKey));
+        } catch (Exception e) {
+            LOGGER.error("Error while sending AES key: ", e);
+        }
     }
 
-    protected void importAesKey() throws Exception {
-        Packet aesPacket = read(PacketType.AES);
-        byte[] encryptedAesKey = Base64.getDecoder().decode(aesPacket.payload);
-        byte[] decryptedAesKey = RSA.decrypt(encryptedAesKey, localKey.getPrivate());
-        aesKey = new SecretKeySpec(decryptedAesKey, "AES");
+    protected void importAesKey() {
+        try {
+            Packet aesPacket = read(PacketType.AES);
+            byte[] encryptedAesKey = Base64.getDecoder().decode(aesPacket.payload);
+            byte[] decryptedAesKey = RSA.decrypt(encryptedAesKey, localKey.getPrivate());
+            aesKey = new SecretKeySpec(decryptedAesKey, "AES");
+        } catch (Exception e) {
+            LOGGER.error("Error while receiving AES key: ", e);
+        }
     }
 
-    private void handleClosedConnection() throws IOException {
-        LOGGER.info("Connection closed from other side");
-        close();
+    public void close() throws ConnectionClosedException {
+        if (!channel.isOpen()) return;
+
+        LOGGER.info("Connection closed");
+        try {
+            channel.close();
+        } catch (IOException ignored) {}
     }
 
-    public void close() throws IOException {
-        LOGGER.info("Closing connection");
-        channel.close();
-        System.exit(0);
+    private void ensureConnected() throws ConnectionClosedException {
+        if (!channel.isOpen()) {
+            throw new ConnectionClosedException("Connection is closed");
+        }
     }
 }

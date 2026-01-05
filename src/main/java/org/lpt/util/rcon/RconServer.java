@@ -6,6 +6,7 @@ import org.lpt.util.rcon.packet.PacketType;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.ExecutorService;
@@ -58,11 +59,12 @@ public class RconServer {
                     try {
                         new ClientHandler(client).handle();
                     } catch (Exception e) {
-                        LOGGER.error("Client error: {}", e.getMessage());
+                        LOGGER.error("Client error: ", e);
                     }
                 });
+            } catch (AsynchronousCloseException ignored) {
             } catch (IOException e) {
-                LOGGER.error("Accept error: {}", e.getMessage());
+                LOGGER.error("Accept error: ", e);
             }
         }
     }
@@ -91,19 +93,20 @@ public class RconServer {
             write(PacketType.AUTH, "");
 
             while (running) {
+                String message;
                 try {
-                    String message = readEncrypted();
-                    String[] response = handler.handleMessage(message);
-
-                    for (String line : response) {
-                        writeEncrypted(line);
-                    }
-
-                    writeEncrypted("\0");
-                } catch (IOException e) {
-                    LOGGER.error("Error reading message: {}", e.toString());
+                    message = readEncrypted();
+                } catch (ConnectionClosedException e) {
+                    LOGGER.error(e.getMessage());
                     break;
                 }
+                String[] response = handler.handleMessage(message);
+
+                for (String line : response) {
+                    writeEncrypted(line);
+                }
+
+                writeEncrypted("\0");
             }
 
             close();
