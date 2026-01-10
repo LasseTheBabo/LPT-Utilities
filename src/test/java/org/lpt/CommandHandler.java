@@ -9,6 +9,6 @@ public class CommandHandler implements MessageHandler {
     public String[] handleMessage(String message) {
         LOGGER.info("Received message: {}", message);
 
-        return new String[] { "hallo" };
+        return new String[] { "hello" };
     }
 }

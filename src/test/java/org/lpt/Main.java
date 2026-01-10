@@ -15,7 +15,7 @@ public class Main {
 
         try (RconClient client = RconClient.connect("localhost", 25570)) {
             if (client.authenticate("Ch4ng3-M3")) {
-                client.sendCommand("say hallo");
+                client.sendCommand("say hello");
             } else {
                 System.out.println("Failed to authenticate");
             }
