@@ -17,21 +17,37 @@ modified version of the code from https://github.com/jobfeikens/rcon
 ### RconClient
 ```java
 public static void main(String[] args) throws Exception {
-    RconClient client = RconClient.connect("localhost", 25570);
-    if (client == null)
-        return;
-
-    client.authenticate("password123");
-    client.sendCommand("say hello");
-    client.close();
+    try (RconClient client = RconClient.connect("localhost", 25570)) {
+        if (client.authenticate("Ch4ng3-M3")) {
+            client.sendCommand("say hallo");
+        } else {
+            System.out.println("Failed to authenticate");
+        }
+    }
 }
 ```
 
 ### RconServer
 ```java
 public static void main(String[] args) throws Exception {
-    RconServer server = new RconServer(25570, "password123", new CommandHandler());
-    server.open();
+    RconServer rconServer = new RconServer(
+            25570,
+            "Ch4ng3-M3",
+            new CommandHandler()
+    );
+}
+```
+
+### MessageHandler
+This class is called when the server receives a message
+```java
+public class CommandHandler implements MessageHandler {
+    @Override
+    public String[] handleMessage(String message) {
+        LOGGER.info("Received message: {}", message);
+        
+        return new String[] { "hallo" };
+    }
 }
 ```
 
