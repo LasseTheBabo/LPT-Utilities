@@ -1,21 +1,24 @@
 package org.lpt;
 
 import org.lpt.util.rcon.RconClient;
+import org.lpt.util.rcon.RconServer;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        //RconServer rconServer = new RconServer(25570, "minecraft", new CommandHandler());
-        //rconServer.open();
-        //Thread.sleep(100);
+        RconServer rconServer = new RconServer(
+                25570,
+                "Ch4ng3-M3",
+                new CommandHandler()
+        );
+        rconServer.open();
+        Thread.sleep(100);
 
-        RconClient client = RconClient.connect("localhost", 25570);
-        if (client == null)
-            return;
-
-        client.authenticate("Ch4ng3-M3");
-        client.sendCommand("say hallo");
-        client.close();
-
-        //rconServer.close();
+        try (RconClient client = RconClient.connect("localhost", 25570)) {
+            if (client.authenticate("Ch4ng3-M3")) {
+                client.sendCommand("say hallo");
+            } else {
+                System.out.println("Failed to authenticate");
+            }
+        }
     }
 }
