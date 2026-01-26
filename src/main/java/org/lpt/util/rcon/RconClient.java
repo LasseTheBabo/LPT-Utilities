@@ -8,6 +8,8 @@ import org.lpt.util.rcon.packet.PacketType;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lpt.util.Util.LOGGER;
 
@@ -51,25 +53,29 @@ public class RconClient extends Rcon implements AutoCloseable {
         return false;
     }
 
-    public void sendCommand(String command) {
-        if (!channel.isOpen()) return;
+    public List<String> sendCommand(String command) {
+        List<String> output = new ArrayList<>();
+
+        if (!channel.isOpen()) return output;
 
         try {
             writeEncrypted(command);
         } catch (Exception e) {
-            LOGGER.error("Could not send command: {}", e.getMessage());
-            return;
+            output.add("Could not send command: " + e.getMessage());
+            return output;
         }
 
         String line = "";
         while (!line.equals("\0")) {
-            LOGGER.info(line);
+            output.add(line);
             try {
                 line = readEncrypted();
             } catch (Exception e) {
-                LOGGER.error("Could not read command output: {}", e.getMessage());
-                return;
+                output.add("Could not read command output: " + e.getMessage());
+                return output;
             }
         }
+
+        return output;
     }
 }

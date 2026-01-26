@@ -5,17 +5,17 @@ import org.lpt.util.rcon.RconServer;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        RconServer rconServer = new RconServer(
+        /*RconServer rconServer = new RconServer(
                 25570,
                 "Ch4ng3-M3",
                 new CommandHandler()
         );
         rconServer.open();
-        Thread.sleep(100);
+        Thread.sleep(100);*/
 
         try (RconClient client = RconClient.connect("localhost", 25570)) {
             if (client.authenticate("Ch4ng3-M3")) {
-                client.sendCommand("say hello");
+                client.sendCommand("help").forEach(System.out::println);
             } else {
                 System.out.println("Failed to authenticate");
             }
