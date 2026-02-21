@@ -1,12 +1,14 @@
 package org.lpt;
 
+import org.junit.jupiter.api.Test;
 import org.lpt.util.Logger;
 import org.lpt.util.Util;
 import org.lpt.util.rcon.RconClient;
 import org.lpt.util.rcon.RconServer;
 
-public class Main {
-    public static void main(String[] args) throws Exception {
+public class ServerClientTest {
+    @Test
+    public void test() throws Exception {
         Util.LOGGER = new Logger() {
             @Override
             public void info(String message) {
