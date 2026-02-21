@@ -1,5 +1,5 @@
 # LPT-Utilities
-LPT-Utilities is a Minecraft library that provides various utilities such as encryption and encrypted RCON communication.
+LPT-Utilities is a library that provides various utilities such as encryption and encrypted RCON communication.
 The code used in `org.lpt.util.rcon.packet` is a slightly
 modified version of the code from https://github.com/jobfeikens/rcon
 
@@ -15,7 +15,7 @@ modified version of the code from https://github.com/jobfeikens/rcon
 
 ## Example Usage
 ### Logger
-To get an output from the methods you need to initialize the logger Util.LOGGER
+To get an output from the methods you need to initialize the logger `Util.LOGGER`
 ```java
 public static void main(String[] args) throws Exception {
     Util.LOGGER = new Logger() {
