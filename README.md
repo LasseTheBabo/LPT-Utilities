@@ -14,6 +14,24 @@ modified version of the code from https://github.com/jobfeikens/rcon
     - Build-in `RconClient` and `RconServer` classes
 
 ## Example Usage
+### Logger
+To get an output from the methods you need to initialize the logger Util.LOGGER
+```java
+public static void main(String[] args) throws Exception {
+    Util.LOGGER = new Logger() {
+        @Override
+        public void info(String message) {
+            System.out.println(message);
+        }
+        
+        @Override 
+        public void error(String message) {
+            System.err.println(message);
+        }
+    };
+}
+```
+
 ### RconClient
 ```java
 public static void main(String[] args) throws Exception {
