@@ -23,7 +23,7 @@ public class PacketWriter {
     public int write(final Packet packet) throws IOException {
         int length = packet.payload.length();
         if (length > Config.C2S_BYTES - 14) {
-            LOGGER.error("Packet payload too big: {}", length);
+            LOGGER.error("Packet payload too big: " + length);
             throw new EOFException();
         }
 

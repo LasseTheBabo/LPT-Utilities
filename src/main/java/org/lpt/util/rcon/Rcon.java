@@ -89,7 +89,7 @@ public class Rcon {
             byte[] publicKey = localKey.getPublic().getEncoded();
             write(PacketType.RSA, Base64.getEncoder().encodeToString(publicKey));
         } catch (Exception e) {
-            LOGGER.error("Error while sending RSA key: ", e);
+            LOGGER.error("Error while sending RSA key: " + e);
         }
     }
 
@@ -98,7 +98,7 @@ public class Rcon {
             Packet rsaPacket = read(PacketType.RSA);
             remoteKey = RSA.importKey(rsaPacket.payload);
         } catch (Exception e) {
-            LOGGER.error("Error while receiving RSA key: ", e);
+            LOGGER.error("Error while receiving RSA key: " + e);
         }
     }
 
@@ -107,7 +107,7 @@ public class Rcon {
             byte[] encryptedAesKey = RSA.encrypt(aesKey.getEncoded(), remoteKey);
             write(PacketType.AES, Base64.getEncoder().encodeToString(encryptedAesKey));
         } catch (Exception e) {
-            LOGGER.error("Error while sending AES key: ", e);
+            LOGGER.error("Error while sending AES key: " + e);
         }
     }
 
@@ -118,7 +118,7 @@ public class Rcon {
             byte[] decryptedAesKey = RSA.decrypt(encryptedAesKey, localKey.getPrivate());
             aesKey = new SecretKeySpec(decryptedAesKey, "AES");
         } catch (Exception e) {
-            LOGGER.error("Error while receiving AES key: ", e);
+            LOGGER.error("Error while receiving AES key: " + e);
         }
     }
 

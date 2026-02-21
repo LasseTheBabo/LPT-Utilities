@@ -59,12 +59,12 @@ public class RconServer {
                     try {
                         new ClientHandler(client).handle();
                     } catch (Exception e) {
-                        LOGGER.error("Client error: ", e);
+                        LOGGER.error("Client error: " + e);
                     }
                 });
             } catch (AsynchronousCloseException ignored) {
             } catch (IOException e) {
-                LOGGER.error("Accept error: ", e);
+                LOGGER.error("Accept error: " + e);
             }
         }
     }
@@ -86,7 +86,7 @@ public class RconServer {
 
             read(PacketType.AUTH);
             if (!readEncrypted().equals(password)) {
-                LOGGER.error("Wrong password from: {}", client.getRemoteAddress());
+                LOGGER.error("Wrong password from: " + client.getRemoteAddress());
                 close();
                 return;
             }
