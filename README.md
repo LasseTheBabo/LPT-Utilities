@@ -76,10 +76,11 @@ Add to `build.gradle`:
 ```gradle
 repositories {
     mavenCentral()
+    maven { url = "https://jitpack.io" }
 }
 
 dependencies {
-    implementation 'com.github.LasseTheBabo:LPT-Utilities:v2.0'
+    implementation 'com.github.LasseTheBabo:LPT-Utilities:v2.1'
 }
 ```
 
@@ -88,6 +89,6 @@ dependencies {
 <dependency>
     <groupId>com.github.LasseTheBabo</groupId>
     <artifactId>LPT-Utilities</artifactId>
-    <version>v2.0</version>
+    <version>v2.1</version>
 </dependency>
 ```
