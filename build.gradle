@@ -5,12 +5,6 @@ plugins {
 group = 'org.lpt'
 version = 'v2.1'
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
-    }
-}
-
 repositories {
     mavenCentral()
 }
