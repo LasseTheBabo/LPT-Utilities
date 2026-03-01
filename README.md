@@ -79,7 +79,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.LasseTheBabo:LPT-Utilities:v1.4'
+    implementation 'com.github.LasseTheBabo:LPT-Utilities:v2.0'
 }
 ```
 
@@ -88,6 +88,6 @@ dependencies {
 <dependency>
     <groupId>com.github.LasseTheBabo</groupId>
     <artifactId>LPT-Utilities</artifactId>
-    <version>your preferred version</version>
+    <version>v2.0</version>
 </dependency>
 ```
