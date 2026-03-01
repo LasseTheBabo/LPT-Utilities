@@ -88,6 +88,6 @@ dependencies {
 <dependency>
     <groupId>com.github.LasseTheBabo</groupId>
     <artifactId>LPT-Utilities</artifactId>
-    <version>v1.4</version>
+    <version>your preferred version</version>
 </dependency>
 ```
