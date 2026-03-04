@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'org.lpt'
-version = 'v2.1.2'
+version = 'v2.2.0'
 
 java {
     toolchain {

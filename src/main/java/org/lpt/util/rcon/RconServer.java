@@ -79,6 +79,8 @@ public class RconServer {
         }
 
         void handle() throws Exception {
+            LOGGER.info("Client " + client.getRemoteAddress() + " connected");
+
             read(PacketType.AUTH);
             sendRsaKey();
             importRsaKey();

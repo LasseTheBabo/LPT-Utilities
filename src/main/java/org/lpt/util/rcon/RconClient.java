@@ -61,7 +61,7 @@ public class RconClient extends Rcon implements AutoCloseable {
         try {
             writeEncrypted(command);
         } catch (Exception e) {
-            output.add("Could not send command: " + e.getMessage());
+            LOGGER.error("Could not send command: " + e.getMessage());
             return output;
         }
 
@@ -71,7 +71,7 @@ public class RconClient extends Rcon implements AutoCloseable {
             try {
                 line = readEncrypted();
             } catch (Exception e) {
-                output.add("Could not read command output: " + e.getMessage());
+                LOGGER.error("Could not read command output: " + e.getMessage());
                 return output;
             }
         }
